@@ -27,9 +27,12 @@ SECRET_KEY = config('SECRET_KEY', default='django-insecure-+rtfa_3xz822te!5r6mwc
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=True, cast=bool)
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1', cast=Csv())
-
-
+ALLOWED_HOSTS = ['jeetech.onrender.com', '127.0.0.1', 'localhost']
+CSRF_TRUSTED_ORIGINS = [ 
+   'https://jeetech.onrender.com'
+    'http://127.0.0.1:8000',
+    'http://localhost:8000'
+]
 # Application definition
 
 INSTALLED_APPS = [
