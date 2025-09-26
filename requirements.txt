@@ -1,4 +1,7 @@
-# Ensure latest build tools (important for Render & Python 3.13+)
+# Force Render to use Python 3.12 (since many packages break on 3.13)
+python==3.12.6
+
+# Ensure latest build tools
 pip>=25.2
 setuptools>=75.0.0
 wheel>=0.44.0
