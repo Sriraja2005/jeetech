@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}ShopX – Home{% endblock %}
+{% block meta_description %}ShopX - Discover premium products with a sleek, modern interface. Shop electronics, fashion, and more with our elegant dark theme.{% endblock %}
+
+{% block content %}
+  <!-- Hero Section -->
+  <section class="hero fade-in" data-animate>
+    <div class="hero-content">
+      <h1 class="title float">Discover Next‑Gen Gear</h1>
+      <p class="subtitle">Premium products with a sleek, glassy interface. Dark, elegant, and fast shopping experience.</p>
+      <div class="btn-group">
+        <a href="{% url 'product_list' %}" class="btn btn-primary">Shop Now</a>
+        <a href="#about" class="btn btn-outline">Learn More</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Products Section -->
+  <section id="products" class="products-section fade-in" data-animate>
+    <div class="products-header">
+      <h2 class="section-title">Featured Products</h2>
+      <p>Discover our handpicked selection of premium products</p>
+    </div>
+    <div id="root"></div>
+  </section>
+
+  <!-- About Section -->
+  <section id="about" class="about-section glass-blur fade-in" data-animate>
+    <div class="about-content">
+      <h2 class="about-title">Why Choose ShopX?</h2>
+      <p class="about-description">
+        Experience shopping like never before with our cutting-edge platform that combines 
+        modern design with powerful functionality.
+      </p>
+      
+      <div class="features-grid">
+        <div class="feature-card glass-blur fade-in delay-1" data-animate>
+          <div class="feature-icon">🎨</div>
+          <h3 class="feature-title">Modern Design</h3>
+          <p class="feature-description">
+            Beautiful dark UI with glassmorphism effects that provide an elegant shopping experience.
+          </p>
+        </div>
+        
+        <div class="feature-card glass-blur fade-in delay-2" data-animate>
+          <div class="feature-icon">⚡</div>
+          <h3 class="feature-title">Lightning Fast</h3>
+          <p class="feature-description">
+            Optimized performance with smooth animations and instant page loads for seamless browsing.
+          </p>
+        </div>
+        
+        <div class="feature-card glass-blur fade-in delay-3" data-animate>
+          <div class="feature-icon">🔒</div>
+          <h3 class="feature-title">Secure Shopping</h3>
+          <p class="feature-description">
+            Advanced security measures to protect your data and ensure safe transactions.
+          </p>
+        </div>
+
+        <div class="feature-card glass-blur fade-in delay-5" data-animate>
+          <div class="feature-icon">💝</div>
+          <h4>Wishlist & Cart</h4>
+          <p>Save your favorite items and manage your shopping cart with ease across all your devices.</p>
+      </div>
+      
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats Section -->
+  <section class="stats-section glass-blur fade-in" data-animate>
+    <div class="stats-grid">
+      <div class="stat-item">
+        <div class="stat-number">10K+</div>
+        <div class="stat-label">Happy Customers</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">5K+</div>
+        <div class="stat-label">Products</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">99%</div>
+        <div class="stat-label">Satisfaction Rate</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">24/7</div>
+        <div class="stat-label">Support</div>
+      </div>
+    </div>
+  </section>
+{% endblock %}
+
+{% block scripts %}
+  <!-- React + Babel CDN (for JSX in development) -->
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- Our React App -->
+  <script type="text/babel" data-presets="react" src="{% static 'js/app.jsx' %}"></script>
+
+  <script>
+    // Counter animation for stats
+    function animateCounters() {
+      const counters = document.querySelectorAll('.stat-number');
+      
+      counters.forEach(counter => {
+        const target = counter.textContent;
+        const numericTarget = parseInt(target.replace(/[^\d]/g, ''));
+        const suffix = target.replace(/[\d]/g, '');
+        
+        if (numericTarget) {
+          let current = 0;
+          const increment = numericTarget / 50;
+          const timer = setInterval(() => {
+            current += increment;
+            if (current >= numericTarget) {
+              counter.textContent = target;
+              clearInterval(timer);
+            } else {
+              counter.textContent = Math.floor(current) + suffix;
+            }
+          }, 30);
+        }
+      });
+    }
+
+    // Trigger counter animation when stats section is visible
+    const statsObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          animateCounters();
+          statsObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.5 });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const statsSection = document.querySelector('.stats-section');
+      if (statsSection) {
+        statsObserver.observe(statsSection);
+      }
+    });
+  </script>
+{% endblock %}
