@@ -1,10 +1,10 @@
-pip>=25.2
-setuptools>=75.0.0
-wheel>=0.44.0
+# Core Django Framework
 Django==5.0.1
 djangorestframework==3.14.0
 django-filter==23.5
 djangorestframework-simplejwt==5.3.1
 Pillow==10.2.0
-python-decouple==3.8
 
+# Environment & Config
+python-decouple==3.8
+python-dotenv==1.0.0
