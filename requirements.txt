@@ -5,7 +5,7 @@ django-filter==23.5
 djangorestframework-simplejwt==5.3.1
 
 # Image processing
-Pillow==10.2.0
+Pillow==10.4.0   # 🔥 upgrade from 10.2.0 to 10.4.0 (supports Python 3.13)
 
 # Configuration management
 python-decouple==3.8
