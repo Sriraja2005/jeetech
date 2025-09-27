@@ -1,5 +1,4 @@
 # Core Django packages
-python==3.12.0
 Django==5.0.1
 djangorestframework==3.14.0
 django-filter==23.5
