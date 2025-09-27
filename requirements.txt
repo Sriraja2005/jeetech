@@ -1,10 +1,31 @@
-# Core Django Framework
+# Build tools (helps with wheel issues)
+setuptools>=65.0.0
+wheel>=0.38.0
+
+# Core Django packages
 Django==5.0.1
 djangorestframework==3.14.0
 django-filter==23.5
 djangorestframework-simplejwt==5.3.1
+
+# Image processing
 Pillow==10.2.0
 
-# Environment & Config
+# Configuration management
 python-decouple==3.8
-python-dotenv==1.0.0
+
+# CORS handling
+django-cors-headers==4.3.1
+
+# Development and debugging tools
+django-extensions==3.2.3
+
+# Database support
+dj-database-url==2.1.0
+psycopg2==2.9.9
+
+# Static files serving for production
+whitenoise==6.6.0
+
+# WSGI server for production
+gunicorn==21.2.0
