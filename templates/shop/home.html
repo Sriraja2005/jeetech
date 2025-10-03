@@ -1,0 +1,387 @@
+{% extends 'shop/base.html' %}
+{% load humanize %}
+
+{% block title %}JEETECH - Home{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="glass-blur fade-in my-6" data-animate>
+    <div class="max-w-7xl mx-auto px-4 py-10">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+            <div>
+                <h1 class="display-4 fw-bold float">Welcome to JEETECH</h1>
+                <p class="lead">Your trusted destination for premium electronics, gadgets, and tech accessories. Experience quality products with exceptional service.</p>
+                <a href="{% url 'product_list' %}" class="btn btn-primary btn-lg" style="text-decoration-color: rgb(239, 240, 241);">
+                    <i class="bi bi-shop"></i> Shop Now
+                </a>
+            </div>
+            <div class="hidden lg:block">
+                <div class="hero-image-container">
+                    <div class="hero-tech-grid">
+                        <div class="tech-item">📱</div>
+                        <div class="tech-item">💻</div>
+                        <div class="tech-item">🎧</div>
+                        <div class="tech-item">📷</div>
+                        <div class="tech-item">⌚</div>
+                        <div class="tech-item">🖥️</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Categories -->
+{% if categories %}
+<section class="glass-blur fade-in my-6" data-animate>
+    <div class="max-w-7xl mx-auto px-4 py-6">
+        <h2 class="text-center mb-4">Shop by Category</h2>
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+            {% for category in categories %}
+                <a href="{% url 'category_products' category.slug %}" class="text-decoration-none">
+                    <div class="card h-100 text-center glass-blur">
+                        <div class="card-body">
+                            <i class="bi bi-tag-fill fs-1 text-primary"></i>
+                            <h6 class="card-title mt-2">{{ category.name }}</h6>
+                            <small class="text-muted">{{ category.product_count }} Products</small>
+                        </div>
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Featured Products -->
+{% if featured_products %}
+<section class="glass-blur fade-in my-6 featured-section" data-animate>
+    <div class="max-w-7xl mx-auto px-4 py-6">
+        <h2 class="text-center mb-4">Featured Products</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {% for product in featured_products %}
+                <div class="card h-100 glass-blur product-card clickable-card" data-url='{% url 'product_detail' product.slug %}'>
+                    <div class="product-image" style="height:220px;">
+                        {% if product.image %}
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                        {% else %}
+                            <img src="https://via.placeholder.com/600x400/222/fff?text={{ product.name|first }}" alt="{{ product.name }}">
+                        {% endif %}
+                        {% if product.in_stock %}
+                            <span class="product-badge">In Stock</span>
+                        {% else %}
+                            <span class="product-badge out-of-stock">Out of Stock</span>
+                        {% endif %}
+                    </div>
+                    <div class="card-body product-content">
+                        <div class="product-category">{{ product.category.name }}</div>
+                        <h5 class="product-title">{{ product.name|truncatechars:30 }}</h5>
+                        <div class="product-footer">
+                            <div class="product-price">₹{{ product.price|intcomma }}</div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="text-center mt-6">
+            <a href="{% url 'product_list' %}" class="btn btn-primary">View All Products</a>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Latest Products -->
+{% if latest_products %}
+<section class="glass-blur fade-in my-6" data-animate>
+    <div class="max-w-7xl mx-auto px-4 py-6">
+        <h2 class="text-center mb-4">Latest Products</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {% for product in latest_products %}
+                <div class="card h-100 glass-blur product-card" data-url='{% url 'product_detail' product.slug %}'>
+                    {% if product.image %}
+                    <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}" style="height: 200px; object-fit: cover;">
+                    {% else %}
+                    <img src="https://via.placeholder.com/300x200" class="card-img-top" alt="{{ product.name }}">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ product.name|truncatechars:30 }}</h5>
+                        <p class="text-muted small">{{ product.category.name }}</p>
+                        <p class="card-text">₹{{ product.price|intcomma }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Features -->
+<section class="glass-blur fade-in my-6" data-animate>
+    <div class="max-w-7xl mx-auto px-4 py-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+            <div>
+                <div class="feature-icon">🚚</div>
+                <h4 class="feature-title">Fast Delivery</h4>
+                <p class="feature-text">Quick and reliable delivery across India with real-time tracking</p>
+            </div>
+            <div>
+                <div class="feature-icon">🔒</div>
+                <h4 class="feature-title">Secure Shopping</h4>
+                <p class="feature-text">100% secure payments with WhatsApp order confirmation</p>
+            </div>
+            <div>
+                <div class="feature-icon">🛡️</div>
+                <h4 class="feature-title">Quality Guarantee</h4>
+                <p class="feature-text">Authentic products with manufacturer warranty and support</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+    {{ block.super }}
+    <style>
+        .hero-section {
+            padding: 3rem 0;
+        }
+        
+        .display-4 {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .lead {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+        
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-light);
+            margin-bottom: 2rem;
+        }
+        
+        .category-card {
+            transition: all var(--transition-normal);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .category-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(110, 231, 255, 0.2);
+        }
+        
+        .product-card {
+            transition: all var(--transition-normal);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            cursor: pointer;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(110, 231, 255, 0.15);
+            border-color: rgba(110, 231, 255, 0.3);
+        }
+        
+        .product-card img {
+            transition: transform var(--transition-normal);
+        }
+        
+        .product-card:hover img {
+            transform: scale(1.05);
+        }
+        
+        .feature-icon {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        
+        .feature-title {
+            color: var(--text-light);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .feature-text {
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+        
+        /* Hero Tech Grid Styling */
+        .hero-image-container {
+            position: relative;
+            height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, rgba(110, 231, 255, 0.1), rgba(110, 231, 255, 0.05));
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+        }
+
+        .hero-tech-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 1.5rem;
+            padding: 2rem;
+        }
+
+        .tech-item {
+            font-size: 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-lg);
+            padding: 1rem;
+            transition: all var(--transition-normal);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .tech-item:hover {
+            transform: scale(1.1) rotate(5deg);
+            background: rgba(110, 231, 255, 0.2);
+            box-shadow: 0 10px 30px rgba(110, 231, 255, 0.3);
+        }
+        
+        @media (max-width: 768px) {
+            .hero-section {
+                padding: 2rem 0;
+                text-align: center;
+            }
+            
+            .display-4 {
+                font-size: 2.25rem;
+                margin-bottom: 1rem;
+            }
+            
+            .lead {
+                font-size: 1.1rem;
+                margin-bottom: 1.5rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+                margin-bottom: 1.5rem;
+            }
+            
+            .hero-image {
+                margin-top: 2rem;
+                display: block !important;
+            }
+            
+            .hero-tech-grid {
+                grid-template-columns: repeat(2, 1fr);
+                grid-template-rows: repeat(3, 1fr);
+                gap: 1rem;
+                padding: 1rem;
+            }
+            
+            .tech-item {
+                font-size: 2rem;
+                padding: 0.5rem;
+            }
+            
+            .feature-icon {
+                font-size: 2.5rem;
+            }
+            
+            .feature-title {
+                font-size: 1.25rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .hero-section {
+                padding: 1.5rem 0;
+            }
+            
+            .display-4 {
+                font-size: 1.75rem;
+                line-height: 1.3;
+            }
+            
+            .lead {
+                font-size: 1rem;
+                margin-bottom: 1.25rem;
+            }
+            
+            .section-title {
+                font-size: 1.5rem;
+                margin-bottom: 1.25rem;
+            }
+            
+            .btn-lg {
+                padding: 0.75rem 1.5rem;
+                font-size: 1rem;
+            }
+            
+            .card-title {
+                font-size: 1rem;
+            }
+            
+            .card-text {
+                font-size: 0.9rem;
+            }
+        }
+        
+        /* Featured Products scoped styling to match the provided design */
+        .featured-section .product-card {
+            border-radius: var(--radius-lg);
+            background: linear-gradient(180deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.02) 100%);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .featured-section .product-image {
+            position: relative;
+            height: 220px;
+            overflow: hidden;
+            background: radial-gradient(120% 100% at 0% 0%, rgba(110,231,255,0.06) 0%, rgba(255,255,255,0.02) 40%, rgba(255,255,255,0.01) 100%);
+        }
+        .featured-section .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform var(--transition-normal);
+        }
+        .featured-section .product-card:hover .product-image img {
+            transform: scale(1.05);
+        }
+        .featured-section .product-content {
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .featured-section .product-category {
+            color: var(--primary);
+            font-size: 0.8rem;
+        }
+        .featured-section .product-title {
+            color: var(--text-light);
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        .featured-section .product-footer {
+            align-items: center;
+        }
+        .featured-section .product-price {
+            color: var(--primary);
+            font-weight: 800;
+            font-size: 1.4rem;
+        }
+        .featured-section .product-badge {
+            left: 0.75rem;
+            top: 0.75rem;
+        }
+
+    </style>
+{% endblock %}

@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="{% block meta_description %}JEE TECH - Your premium online shopping destination{% endblock %}">
+    <meta name="theme-color" content="#FF6B35">
+    <title>{% block title %}JEE TECH{% endblock %}</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              slate: {
+                850: '#0f1726'
+              }
+            }
+          }
+        }
+      }
+    </script>
+    <!-- Styles -->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <style>
+      .add-to-cart-modern {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.625rem 1.125rem;
+        border-radius: 9999px;
+        background: linear-gradient(135deg, #06b6d4, #3b82f6);
+        color: #fff;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        box-shadow: 0 8px 20px rgba(59, 130, 246, 0.35);
+        transition: transform 150ms ease, box-shadow 150ms ease, opacity 150ms ease;
+        will-change: transform;
+      }
+      .add-to-cart-modern:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 28px rgba(59, 130, 246, 0.45);
+      }
+      .add-to-cart-modern:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+      }
+      .add-to-cart-modern svg {
+        width: 18px;
+        height: 18px;
+      }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body class="light-body">
+    <!-- Background gradients -->
+    <div id="backdrop-gradients"></div>
+    
+    <!-- Tailwind Navbar -->
+    <header class="sticky top-3 z-50">
+      <div class="mx-auto max-w-7xl px-4">
+        <nav class="bg-white border border-gray-100 backdrop-blur rounded-xl shadow-lg shadow-gray-500/5">
+          <div class="flex items-center justify-between px-4 py-3 md:px-6">
+            <!-- Brand -->
+            <a href="{% url 'home' %}" class="flex items-center gap-1 font-bold text-slate-900 text-xl hover:text-orange-500 transition-colors duration-200">
+              <span>JEE</span>
+              <span class="bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text text-transparent">TECH</span>
+            </a>
+            
+            <!-- Desktop menu -->
+            <ul class="hidden md:flex items-center gap-6 text-sm">
+              <li><a href="{% url 'product_list' %}" class="text-slate-700 hover:text-orange-500 transition-colors duration-200 relative group">
+                Products
+                <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-orange-500 transition-all duration-200 group-hover:w-full"></span>
+              </a></li>
+              <li><a href="{% url 'about' %}" class="text-slate-700 hover:text-orange-500 transition-colors duration-200 relative group">
+                About
+                <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-orange-500 transition-all duration-200 group-hover:w-full"></span>
+              </a></li>
+              <li>
+                <a href="{% url 'wishlist' %}" class="relative text-slate-700 hover:text-orange-500 transition-colors duration-200 group">
+                  Wishlist
+                  <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-orange-500 transition-all duration-200 group-hover:w-full"></span>
+                  {% if wishlist_count and wishlist_count|add:0 > 0 %}
+                    <span class="absolute -top-2 -right-3 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-orange-500 text-[10px] font-bold text-white px-1">{{ wishlist_count }}</span>
+                  {% endif %}
+                </a>
+              </li>
+              <li>
+                <a href="{% url 'cart' %}" class="relative text-slate-700 hover:text-orange-500 transition-colors duration-200 group">
+                  Cart
+                  <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-orange-500 transition-all duration-200 group-hover:w-full"></span>
+                  {% if cart_count and cart_count|add:0 > 0 %}
+                    <span class="absolute -top-2 -right-3 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-orange-500 text-[10px] font-bold text-white px-1">{{ cart_count }}</span>
+                  {% endif %}
+                </a>
+              </li>
+              {% if user.is_authenticated %}
+                {% if user.is_staff or user.is_superuser %}
+                  <li class="relative group">
+                    <a href="{% url 'admin_dashboard' %}" class="text-slate-700 hover:text-orange-500 transition-colors duration-200 flex items-center gap-1 group">
+                      Admin
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                      </svg>
+                    </a>
+                    <!-- Admin Dropdown -->
+                    <div class="absolute top-full left-0 mt-2 w-48 bg-white/95 backdrop-blur border border-gray-200 rounded-xl shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                      <div class="py-2">
+                        <a href="{% url 'admin_dashboard' %}" class="block px-4 py-2 text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors duration-200">Dashboard</a>
+                        <a href="{% url 'admin_products' %}" class="block px-4 py-2 text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors duration-200">Manage Products</a>
+                        <a href="{% url 'admin_product_add' %}" class="block px-4 py-2 text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors duration-200">Add Product</a>
+                      </div>
+                    </div>
+                  </li>
+                {% endif %}
+                <li><a href="{% url 'profile' %}" class="text-slate-700 hover:text-orange-500 transition-colors duration-200 relative group">
+                  Profile
+                  <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-orange-500 transition-all duration-200 group-hover:w-full"></span>
+                </a></li>
+                <li>
+                  <a href="{% url 'logout' %}" class="inline-flex items-center gap-1 rounded-md border border-gray-300 px-3 py-1.5 text-slate-700 hover:text-orange-600 hover:border-orange-400 hover:bg-orange-50 transition-all duration-200" onclick="return confirm('Are you sure you want to logout?')">
+                    Logout
+                  </a>
+                </li>
+              {% else %}
+                <li><a href="{% url 'login' %}" class="text-slate-700 hover:text-orange-500 transition-colors duration-200 relative group">
+                  Login
+                  <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-orange-500 transition-all duration-200 group-hover:w-full"></span>
+                </a></li>
+                <li><a href="{% url 'signup' %}" class="inline-flex items-center gap-1 rounded-md border border-orange-500 bg-orange-500 px-3 py-1.5 text-white hover:bg-orange-600 hover:border-orange-600 transition-all duration-200 shadow-sm hover:shadow-md">Signup</a></li>
+              {% endif %}
+            </ul>
+
+            <!-- Mobile toggle -->
+            <button id="mobileMenuBtn" class="md:hidden inline-flex items-center justify-center w-10 h-10 rounded-md border border-gray-300 text-slate-700 hover:text-orange-500 hover:border-orange-400 hover:bg-orange-50 transition-all duration-200" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
+              ☰
+            </button>
+          </div>
+
+          <!-- Mobile dropdown under navbar -->
+          <div id="mobileMenu" class="md:hidden hidden px-4 pb-4">
+            <div class="rounded-xl border border-gray-200 bg-white/95 backdrop-blur shadow-lg shadow-gray-500/10 overflow-hidden">
+              <ul class="py-2">
+                <li><a href="{% url 'product_list' %}" class="block px-4 py-2.5 text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors duration-200">Products</a></li>
+                <li><a href="{% url 'about' %}" class="block px-4 py-2.5 text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors duration-200">About</a></li>
+                <li>
+                  <a href="{% url 'wishlist' %}" class="relative block px-4 py-2.5 text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors duration-200">
+                    Wishlist
+                    {% if wishlist_count and wishlist_count|add:0 > 0 %}
+                      <span class="ml-2 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-orange-500 text-[10px] font-bold text-white px-1">{{ wishlist_count }}</span>
+                    {% endif %}
+                  </a>
+                </li>
+                <li>
+                  <a href="{% url 'cart' %}" class="relative block px-4 py-2.5 text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors duration-200">
+                    Cart
+                    {% if cart_count and cart_count|add:0 > 0 %}
+                      <span class="ml-2 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-orange-500 text-[10px] font-bold text-white px-1">{{ cart_count }}</span>
+                    {% endif %}
+                  </a>
+                </li>
+                {% if user.is_authenticated %}
+                  {% if user.is_staff or user.is_superuser %}
+                    <li><a href="{% url 'admin_dashboard' %}" class="block px-4 py-2.5 text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors duration-200">Admin Dashboard</a></li>
+                    <li><a href="{% url 'admin_products' %}" class="block px-4 py-2.5 text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors duration-200">Manage Products</a></li>
+                    <li><a href="{% url 'admin_product_add' %}" class="block px-4 py-2.5 text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors duration-200">Add Product</a></li>
+                  {% endif %}
+                  <li><a href="{% url 'profile' %}" class="block px-4 py-2.5 text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors duration-200">Profile</a></li>
+                  <li class="px-4 py-2.5">
+                    <a href="{% url 'logout' %}" class="w-full inline-flex items-center justify-center rounded-md border border-gray-300 px-3 py-2 text-slate-700 hover:text-orange-600 hover:border-orange-400 hover:bg-orange-50 transition-all duration-200" onclick="return confirm('Are you sure you want to logout?')">Logout</a>
+                  </li>
+                {% else %}
+                  <li><a href="{% url 'login' %}" class="block px-4 py-2.5 text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors duration-200">Login</a></li>
+                  <li class="px-4 py-2.5"><a href="{% url 'signup' %}" class="w-full inline-flex items-center justify-center rounded-md border border-orange-500 bg-orange-500 px-3 py-2 text-white hover:bg-orange-600 hover:border-orange-600 transition-all duration-200">Signup</a></li>
+                {% endif %}
+              </ul>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Messages -->
+    {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible glass-blur fade-in" data-animate>
+                    {{ message }}
+                    <button type="button" class="btn-close" aria-label="Close">&times;</button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Main content -->
+    <main class="container">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer glass-blur">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <a href="{% url 'home' %}" class="footer-logo">
+                        JEE<span>TECH</span>
+                    </a>
+                    <p class="footer-about">
+                        Premium products with a sleek, glassy interface. Dark, elegant, and fast shopping experience.
+                    </p>
+                    <div class="social-links">
+                        <a href="#" class="social-link" aria-label="Facebook">FB</a>
+                        <a href="#" class="social-link" aria-label="Twitter">TW</a>
+                        <a href="#" class="social-link" aria-label="Instagram">IG</a>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h4 class="footer-title">Quick Links</h4>
+                    <ul class="footer-links">
+                        <li><a href="{% url 'product_list' %}">Products</a></li>
+                        <li><a href="{% url 'about' %}">About Us</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                        <li><a href="#terms">Terms & Conditions</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4 class="footer-title">Categories</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Electronics</a></li>
+                        <li><a href="#">Fashion</a></li>
+                        <li><a href="#">Home & Garden</a></li>
+                        <li><a href="#">Sports</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4 class="footer-title">Newsletter</h4>
+                    <p>Stay updated with our latest offers and products.</p>
+                    <form class="subscribe-form">
+                        <input type="email" class="subscribe-input" placeholder="Enter your email" required>
+                        <button type="submit" class="subscribe-button">Subscribe</button>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 JeeTech. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scroll to top button -->
+    <button id="scrollTop" class="scroll-top" aria-label="Scroll to top">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 15l-6-6-6 6"/>
+        </svg>
+    </button>
+
+    <!-- Custom JavaScript -->
+    <script>
+        // Auto-hide messages after 5 seconds
+        setTimeout(function() {
+            const messages = document.querySelectorAll('.alert');
+            messages.forEach(function(message) {
+                message.style.opacity = '0';
+                setTimeout(function() {
+                    message.remove();
+                }, 300);
+            });
+        }, 5000);
+
+        // Close message manually
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('btn-close')) {
+                const message = e.target.closest('.alert');
+                message.style.opacity = '0';
+                setTimeout(function() {
+                    message.remove();
+                }, 300);
+            }
+        });
+
+        // Mobile dropdown toggle
+        (function() {
+          const btn = document.getElementById('mobileMenuBtn');
+          const menu = document.getElementById('mobileMenu');
+          if (!btn || !menu) return;
+          btn.addEventListener('click', () => {
+            const expanded = btn.getAttribute('aria-expanded') === 'true';
+            btn.setAttribute('aria-expanded', String(!expanded));
+            menu.classList.toggle('hidden');
+          });
+          // Close on link click
+          menu.addEventListener('click', (e) => {
+            if (e.target.tagName === 'A') {
+              menu.classList.add('hidden');
+              btn.setAttribute('aria-expanded', 'false');
+            }
+          });
+          // Close on ESC
+          document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+              menu.classList.add('hidden');
+              btn.setAttribute('aria-expanded', 'false');
+            }
+          });
+        })();
+
+        // Clickable cards functionality
+        document.addEventListener('click', function(e) {
+            const clickableCard = e.target.closest('[data-url]');
+            if (clickableCard) {
+                const url = clickableCard.getAttribute('data-url');
+                if (url) {
+                    window.location.href = url;
+                }
+            }
+        });
+
+        // AJAX Wishlist Toggle (no page refresh) - handles both click and submit
+        async function submitWishlistForm(form) {
+            const button = form.querySelector('button');
+            if (!button) return;
+
+            const originalHTML = button.innerHTML;
+            button.disabled = true;
+            button.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>';
+
+            try {
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRFToken': (form.querySelector('[name=csrfmiddlewaretoken]') || {}).value || ''
+                    },
+                    body: new FormData(form)
+                });
+                const data = await response.json();
+                if (data && data.success) {
+                    // Toggle heart active state
+                    button.classList.toggle('active', Boolean(data.in_wishlist));
+                    // Update wishlist badge in navbar if present
+                    const wishlistLinks = document.querySelectorAll('a[href*="wishlist"]');
+                    wishlistLinks.forEach(link => {
+                        let badge = link.querySelector('span[class*="rounded-full"]');
+                        if (!badge && data.wishlist_count > 0) {
+                            badge = document.createElement('span');
+                            badge.className = 'absolute -top-2 -right-3 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-orange-500 text-[10px] font-bold text-white px-1';
+                            link.appendChild(badge);
+                        }
+                        if (badge) {
+                            if (data.wishlist_count > 0) {
+                                badge.textContent = data.wishlist_count;
+                                badge.style.display = '';
+                            } else {
+                                badge.style.display = 'none';
+                            }
+                        }
+                    });
+                }
+            } catch (err) {
+                console.error('Wishlist toggle failed', err);
+            } finally {
+                button.disabled = false;
+                button.innerHTML = originalHTML;
+            }
+        }
+
+        // Intercept clicks on wishlist forms (e.g., clicking the heart button)
+        document.addEventListener('click', function(e) {
+            const form = e.target.closest('form.wishlist-form');
+            if (!form) return;
+            e.preventDefault();
+            e.stopPropagation();
+            submitWishlistForm(form);
+        });
+
+        // Intercept submit events (keyboard enter, programmatic submit)
+        document.addEventListener('submit', function(e) {
+            const form = e.target;
+            if (!(form && form.classList && form.classList.contains('wishlist-form'))) return;
+            e.preventDefault();
+            e.stopPropagation();
+            submitWishlistForm(form);
+        }, true);
+
+        // AJAX Add to Cart (no page refresh)
+        async function submitAddToCartForm(form) {
+            const button = form.querySelector('button[type="submit"]') || form.querySelector('button');
+            if (!button) return;
+            const originalHTML = button.innerHTML;
+            button.disabled = true;
+            button.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>';
+            try {
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRFToken': (form.querySelector('[name=csrfmiddlewaretoken]') || {}).value || ''
+                    },
+                    body: new FormData(form)
+                });
+                const data = await response.json();
+                if (data && data.success) {
+                    // Update cart badge in navbar
+                    const cartLinks = document.querySelectorAll('a[href*="cart"]');
+                    cartLinks.forEach(link => {
+                        let badge = link.querySelector('span[class*="rounded-full"]');
+                        if (!badge && data.cart_count > 0) {
+                            badge = document.createElement('span');
+                            badge.className = 'absolute -top-2 -right-3 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-orange-500 text-[10px] font-bold text-white px-1';
+                            link.appendChild(badge);
+                        }
+                        if (badge) {
+                            if (data.cart_count > 0) {
+                                badge.textContent = data.cart_count;
+                                badge.style.display = '';
+                            } else {
+                                badge.style.display = 'none';
+                            }
+                        }
+                    });
+                } else if (data && data.error === 'insufficient_stock') {
+                    alert('Only ' + data.available + ' items available in stock.');
+                }
+            } catch (err) {
+                console.error('Add to cart failed', err);
+            } finally {
+                button.disabled = false;
+                button.innerHTML = originalHTML;
+            }
+        }
+
+        document.addEventListener('submit', function(e) {
+            const form = e.target;
+            if (!(form && form.classList && form.classList.contains('add-to-cart-form'))) return;
+            e.preventDefault();
+            e.stopPropagation();
+            submitAddToCartForm(form);
+        }, true);
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Scroll to top functionality
+        const scrollTopBtn = document.getElementById('scrollTop');
+        if (scrollTopBtn) {
+            window.addEventListener('scroll', function() {
+                if (window.pageYOffset > 300) {
+                    scrollTopBtn.style.display = 'flex';
+                } else {
+                    scrollTopBtn.style.display = 'none';
+                }
+            });
+
+            scrollTopBtn.addEventListener('click', function() {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+        }
+
+        // Clickable cards functionality
+        document.addEventListener('click', function(e) {
+            const clickableCard = e.target.closest('[data-url]');
+            if (clickableCard) {
+                const url = clickableCard.getAttribute('data-url');
+                if (url) {
+                    window.location.href = url;
+                }
+            }
+        });
+        
+        // Intersection Observer for animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { 
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        });
+        
+        // Observe all elements with animation classes
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('[data-animate], .fade-in, .slide-in-left, .slide-in-right').forEach(el => {
+                observer.observe(el);
+            });
+        });
+        
+        // Navbar scroll effect
+        let lastScrollTop = 0;
+        const navbar = document.querySelector('.navbar');
+        
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            
+            if (scrollTop > 100) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+            
+            lastScrollTop = scrollTop;
+        }, { passive: true });
+    </script>
+    
+    {% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,472 @@
+{% extends 'shop/base.html' %}
+{% load humanize %}
+
+{% block page_title %}Shopping Cart - JEE TECH{% endblock %}
+{% block page_heading %}Shopping Cart{% endblock %}
+{% block current_page %}Cart{% endblock %}
+
+{% block page_content %}
+    {% if cart_items %}
+        <div class="cart-container">
+            <!-- Cart Items -->
+            <div class="cart-items">
+                {% for item in cart_items %}
+                    <div class="cart-item glass-blur fade-in" data-animate>
+                        <div class="item-image">
+                            {% if item.product.image %}
+                                <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" onerror="this.src='https://via.placeholder.com/120x120/333/fff?text={{ item.product.name|first }}'">
+                            {% else %}
+                                <img src="https://via.placeholder.com/120x120/333/fff?text={{ item.product.name|first }}" alt="{{ item.product.name }}">
+                            {% endif %}
+                        </div>
+                        
+                        <div class="item-details">
+                            <h3 class="item-name">{{ item.product.name }}</h3>
+                            <p class="item-category">{{ item.product.category.name }}</p>
+                            <p class="item-price">₹{{ item.product.price|intcomma }}</p>
+                        </div>
+                        
+                        <div class="item-quantity">
+                            <form method="post" action="{% url 'update_cart' item.id %}" class="quantity-form">
+                                {% csrf_token %}
+                                <div class="quantity-selector">
+                                    <button type="button" class="quantity-button" onclick="decreaseQuantity(this)">−</button>
+                                    <input type="number" name="quantity" value="{{ item.quantity }}" min="1" max="{{ item.product.stock }}" class="quantity-input" onchange="this.form.submit()">
+                                    <button type="button" class="quantity-button" onclick="increaseQuantity(this)">+</button>
+                                </div>
+                            </form>
+                        </div>
+                        
+                        <div class="item-total">
+                            <span class="total-price">₹{{ item.get_total_price|intcomma }}</span>
+                        </div>
+                        
+                        <div class="item-actions">
+                            <a href="{% url 'remove_from_cart' item.id %}" class="btn-remove" onclick="return confirm('Remove this item from cart?')" title="Remove item">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6h14zM10 11v6M14 11v6"/>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <!-- Order Summary -->
+            <div class="order-summary glass-blur fade-in" data-animate>
+                <h3>Order Summary</h3>
+                
+                <div class="summary-line">
+                    <span>Subtotal ({{ cart_items|length }} item{{ cart_items|length|pluralize }})</span>
+                    <span>₹{{ total|intcomma }}</span>
+                </div>
+                
+                <div class="summary-divider"></div>
+                
+                <div class="summary-total">
+                    <span>Total</span>
+                    <span>₹{{ total|intcomma }}</span>
+                </div>
+                
+                <div class="checkout-actions">
+                    <a href="{% url 'checkout_whatsapp' %}" class="btn btn-primary btn-block btn-ripple">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.465 3.63"/>
+                        </svg>
+                        Checkout via WhatsApp
+                    </a>
+                    
+                    <a href="{% url 'product_list' %}" class="btn btn-outline btn-block">
+                        Continue Shopping
+                    </a>
+                </div>
+                
+                <div class="checkout-info">
+                    <p>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M12 6v6l4 2"/>
+                        </svg>
+                        Clicking "Checkout via WhatsApp" will open WhatsApp with your order details. Complete your order by sending the message to our support team.
+                    </p>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="empty-cart glass-blur fade-in" data-animate>
+            <div class="empty-icon">🛒</div>
+            <h2>Your cart is empty</h2>
+            <p>Add some amazing products to your cart and come back to checkout!</p>
+            <a href="{% url 'product_list' %}" class="btn btn-primary btn-ripple">
+                Start Shopping
+            </a>
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block extra_css %}
+    {{ block.super }}
+    <style>
+        .cart-container {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+        
+        .cart-items {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .cart-item {
+            display: grid;
+            grid-template-columns: 120px 1fr auto auto auto;
+            gap: 1.5rem;
+            padding: 1.5rem;
+            align-items: center;
+        }
+        
+        .item-image img {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: var(--radius-md);
+        }
+        
+        .item-details h3 {
+            margin: 0 0 0.5rem;
+            font-size: 1.1rem;
+            color: var(--text-light);
+        }
+        
+        .item-category {
+            color: var(--primary);
+            font-size: 0.9rem;
+            margin: 0 0 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .item-price {
+            color: var(--text-muted);
+            margin: 0;
+            font-size: 0.95rem;
+        }
+        
+        .quantity-form {
+            margin: 0;
+        }
+        
+        .total-price {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        .btn-remove {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 107, 107, 0.1);
+            color: var(--danger);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: all var(--transition-fast);
+            border: 1px solid rgba(255, 107, 107, 0.2);
+        }
+        
+        .btn-remove:hover {
+            background: var(--danger);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .order-summary {
+            padding: 2rem;
+            height: fit-content;
+            position: sticky;
+            top: 2rem;
+        }
+        
+        .order-summary h3 {
+            margin: 0 0 1.5rem;
+            color: var(--text-light);
+        }
+        
+        .summary-line {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            color: var(--text-muted);
+        }
+        
+        
+        .summary-divider {
+            height: 1px;
+            background: var(--stroke);
+            margin: 1.5rem 0;
+        }
+        
+        .summary-total {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-light);
+            margin-bottom: 2rem;
+        }
+        
+        .checkout-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .btn-block {
+            width: 100%;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .checkout-info {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: rgba(110, 231, 255, 0.05);
+            border-radius: var(--radius-md);
+            border: 1px solid rgba(110, 231, 255, 0.1);
+        }
+        
+        .checkout-info p {
+            margin: 0;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            line-height: 1.5;
+        }
+        
+        .checkout-info svg {
+            margin-top: 0.1rem;
+            flex-shrink: 0;
+        }
+        
+        .empty-cart {
+            text-align: center;
+            padding: 4rem 2rem;
+            max-width: 500px;
+            margin: 2rem auto;
+        }
+        
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            opacity: 0.7;
+        }
+        
+        .empty-cart h2 {
+            margin-bottom: 1rem;
+            color: var(--text-light);
+        }
+        
+        .empty-cart p {
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+        
+        @media (max-width: 768px) {
+            .cart-container {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+                padding: 0 1rem;
+            }
+            
+            .cart-item {
+                grid-template-columns: 100px 1fr;
+                gap: 1rem;
+                padding: 1.25rem;
+                grid-template-areas: 
+                    "image details"
+                    "quantity total"
+                    "actions actions";
+            }
+            
+            .item-image { grid-area: image; }
+            .item-details { grid-area: details; }
+            .item-quantity { grid-area: quantity; }
+            .item-total { grid-area: total; text-align: right; }
+            .item-actions { grid-area: actions; text-align: center; }
+            
+            .item-image img {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .item-details h3 {
+                font-size: 1rem;
+            }
+            
+            .item-category {
+                font-size: 0.8rem;
+            }
+            
+            .item-price {
+                font-size: 0.9rem;
+            }
+            
+            .total-price {
+                font-size: 1rem;
+            }
+            
+            .order-summary {
+                position: static;
+                padding: 1.5rem;
+            }
+            
+            .order-summary h3 {
+                font-size: 1.25rem;
+            }
+            
+            .summary-total {
+                font-size: 1.1rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .cart-container {
+                padding: 0 0.5rem;
+            }
+            
+            .cart-item {
+                grid-template-columns: 80px 1fr;
+                gap: 0.75rem;
+                padding: 1rem;
+            }
+            
+            .item-image img {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .item-details h3 {
+                font-size: 0.95rem;
+                margin-bottom: 0.25rem;
+            }
+            
+            .item-category {
+                font-size: 0.75rem;
+                margin-bottom: 0.25rem;
+            }
+            
+            .item-price {
+                font-size: 0.85rem;
+            }
+            
+            .total-price {
+                font-size: 0.95rem;
+            }
+            
+            .quantity-controls {
+                transform: scale(0.9);
+            }
+            
+            .btn-remove {
+                width: 36px;
+                height: 36px;
+            }
+            
+            .order-summary {
+                padding: 1rem;
+            }
+            
+            .order-summary h3 {
+                font-size: 1.1rem;
+            }
+            
+            .summary-line {
+                font-size: 0.9rem;
+            }
+            
+            .summary-total {
+                font-size: 1rem;
+            }
+            
+            .btn-block {
+                padding: 0.75rem 1rem;
+                font-size: 0.9rem;
+            }
+            
+            .checkout-info p {
+                font-size: 0.8rem;
+            }
+            
+            .empty-cart {
+                padding: 3rem 1rem;
+            }
+            
+            .empty-icon {
+                font-size: 3rem;
+            }
+            
+            .empty-cart h2 {
+                font-size: 1.25rem;
+            }
+            
+            .empty-cart p {
+                font-size: 0.95rem;
+            }
+        }
+        
+        @media (max-width: 360px) {
+            .cart-item {
+                padding: 0.75rem;
+            }
+            
+            .item-image img {
+                width: 70px;
+                height: 70px;
+            }
+            
+            .item-details h3 {
+                font-size: 0.9rem;
+            }
+            
+            .quantity-controls {
+                transform: scale(0.8);
+            }
+            
+            .btn-remove {
+                width: 32px;
+                height: 32px;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        function increaseQuantity(button) {
+            const input = button.previousElementSibling;
+            const max = parseInt(input.getAttribute('max'));
+            const current = parseInt(input.value);
+            if (current < max) {
+                input.value = current + 1;
+                input.form.submit();
+            }
+        }
+        
+        function decreaseQuantity(button) {
+            const input = button.nextElementSibling;
+            const current = parseInt(input.value);
+            if (current > 1) {
+                input.value = current - 1;
+                input.form.submit();
+            }
+        }
+    </script>
+{% endblock %}

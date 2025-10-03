@@ -1,0 +1,429 @@
+{% extends 'shop/base.html' %}
+
+{% block page_title %}Sign Up - JEE TECH{% endblock %}
+{% block page_heading %}Join JEE TECH{% endblock %}
+{% block current_page %}Sign Up{% endblock %}
+
+{% block page_content %}
+    <div class="max-w-7xl mx-auto px-4">
+    <div class="auth-container">
+        <div class="auth-card glass-blur fade-in" data-animate>
+            <div class="auth-header">
+                <div class="auth-icon">🚀</div>
+                <h2>Create Your Account</h2>
+                <p>Join thousands of happy customers shopping with us</p>
+            </div>
+            
+            {% if form.errors %}
+                <div class="auth-errors">
+                    <div class="error-message">Please correct the errors below.</div>
+                </div>
+            {% endif %}
+
+            <form method="post" class="auth-form">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label for="{{ form.username.id_for_label }}" class="form-label">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                        Username *
+                    </label>
+                    <input type="text" 
+                           class="form-control{% if form.username.errors %} error{% endif %}" 
+                           id="{{ form.username.id_for_label }}" 
+                           name="{{ form.username.name }}" 
+                           value="{{ form.username.value|default:'' }}" 
+                           placeholder="Choose a unique username"
+                           required>
+                    {% if form.username.errors %}
+                        <div class="field-error">{{ form.username.errors.0 }}</div>
+                    {% endif %}
+                    <div class="field-help">Letters, digits and @/./+/-/_ only</div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="{{ form.first_name.id_for_label }}" class="form-label">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                <circle cx="12" cy="7" r="4"/>
+                            </svg>
+                            First Name *
+                        </label>
+                        <input type="text" 
+                               class="form-control{% if form.first_name.errors %} error{% endif %}" 
+                               id="{{ form.first_name.id_for_label }}" 
+                               name="{{ form.first_name.name }}" 
+                               value="{{ form.first_name.value|default:'' }}" 
+                               placeholder="Your first name"
+                               required>
+                        {% if form.first_name.errors %}
+                            <div class="field-error">{{ form.first_name.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="{{ form.last_name.id_for_label }}" class="form-label">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                <circle cx="12" cy="7" r="4"/>
+                            </svg>
+                            Last Name *
+                        </label>
+                        <input type="text" 
+                               class="form-control{% if form.last_name.errors %} error{% endif %}" 
+                               id="{{ form.last_name.id_for_label }}" 
+                               name="{{ form.last_name.name }}" 
+                               value="{{ form.last_name.value|default:'' }}" 
+                               placeholder="Your last name"
+                               required>
+                        {% if form.last_name.errors %}
+                            <div class="field-error">{{ form.last_name.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.email.id_for_label }}" class="form-label">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                            <polyline points="22,6 12,13 2,6"/>
+                        </svg>
+                        Email Address *
+                    </label>
+                    <input type="email" 
+                           class="form-control{% if form.email.errors %} error{% endif %}" 
+                           id="{{ form.email.id_for_label }}" 
+                           name="{{ form.email.name }}" 
+                           value="{{ form.email.value|default:'' }}" 
+                           placeholder="your.email@example.com"
+                           required>
+                    {% if form.email.errors %}
+                        <div class="field-error">{{ form.email.errors.0 }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.password1.id_for_label }}" class="form-label">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                            <circle cx="12" cy="16" r="1"/>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                        </svg>
+                        Password *
+                    </label>
+                    <input type="password" 
+                           class="form-control{% if form.password1.errors %} error{% endif %}" 
+                           id="{{ form.password1.id_for_label }}" 
+                           name="{{ form.password1.name }}" 
+                           placeholder="Create a strong password"
+                           required>
+                    {% if form.password1.errors %}
+                        <div class="field-error">{{ form.password1.errors.0 }}</div>
+                    {% endif %}
+                    {% if form.password1.help_text %}
+                        <div class="field-help">{{ form.password1.help_text|safe }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.password2.id_for_label }}" class="form-label">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                            <circle cx="12" cy="16" r="1"/>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                        </svg>
+                        Confirm Password *
+                    </label>
+                    <input type="password" 
+                           class="form-control{% if form.password2.errors %} error{% endif %}" 
+                           id="{{ form.password2.id_for_label }}" 
+                           name="{{ form.password2.name }}" 
+                           placeholder="Confirm your password"
+                           required>
+                    {% if form.password2.errors %}
+                        <div class="field-error">{{ form.password2.errors.0 }}</div>
+                    {% endif %}
+                </div>
+
+                <button type="submit" class="auth-submit-btn btn btn-primary btn-ripple">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                        <circle cx="8.5" cy="7" r="4"/>
+                        <line x1="20" y1="8" x2="20" y2="14"/>
+                        <line x1="23" y1="11" x2="17" y2="11"/>
+                    </svg>
+                    Create Account
+                </button>
+            </form>
+
+            <div class="auth-divider">
+                <span>or</span>
+            </div>
+
+            <div class="auth-footer">
+                <p>Already have an account? <a href="{% url 'login' %}" class="auth-link">Sign in here</a></p>
+            </div>
+        </div>
+    </div>
+    </div>
+{% endblock %}
+
+{% block extra_css %}
+    {{ block.super }}
+    <style>
+        .auth-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 60vh;
+            padding: 2rem 0;
+        }
+        
+        .auth-card {
+            width: 100%;
+            max-width: 500px;
+            padding: 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .auth-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(110, 231, 255, 0.1), transparent);
+            animation: shimmer 3s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        .auth-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .auth-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.8;
+        }
+        
+        .auth-header h2 {
+            margin: 0 0 0.5rem;
+            color: var(--text-light);
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+        
+        .auth-header p {
+            margin: 0;
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+        
+        .auth-errors {
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: rgba(255, 107, 107, 0.1);
+            border: 1px solid rgba(255, 107, 107, 0.3);
+            border-radius: var(--radius-md);
+        }
+        
+        .error-message {
+            color: var(--danger);
+            font-size: 0.9rem;
+            margin: 0;
+        }
+        
+        .auth-form {
+            margin-bottom: 2rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        .form-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+            color: var(--text-light);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            border: 2px solid var(--stroke);
+            border-radius: var(--radius-lg);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-light);
+            font-size: 1rem;
+            transition: all var(--transition-fast);
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(110, 231, 255, 0.1);
+            background: rgba(255, 255, 255, 0.08);
+        }
+        
+        .form-control::placeholder {
+            color: var(--text-muted);
+        }
+        
+        .form-control.error {
+            border-color: var(--danger);
+        }
+        
+        .field-error {
+            margin-top: 0.5rem;
+            color: var(--danger);
+            font-size: 0.85rem;
+        }
+        
+        .field-help {
+            margin-top: 0.5rem;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            line-height: 1.4;
+        }
+        
+        .auth-submit-btn {
+            width: 100%;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: #001014;
+            border: none;
+            border-radius: var(--radius-lg);
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-top: 2rem;
+        }
+        
+        .auth-submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(110, 231, 255, 0.4);
+        }
+        
+        .auth-divider {
+            position: relative;
+            text-align: center;
+            margin: 2rem 0;
+        }
+        
+        .auth-divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: var(--stroke);
+        }
+        
+        .auth-divider span {
+            background: var(--bg);
+            padding: 0 1rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        
+        .auth-footer {
+            text-align: center;
+        }
+        
+        .auth-footer p {
+            margin: 0;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        
+        .auth-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color var(--transition-fast);
+        }
+        
+        .auth-link:hover {
+            color: var(--primary-dark);
+        }
+        
+        @media (max-width: 768px) {
+            .auth-container {
+                padding: 1rem;
+            }
+            
+            .auth-card {
+                padding: 2rem;
+            }
+            
+            .auth-header h2 {
+                font-size: 1.5rem;
+            }
+            
+            .auth-icon {
+                font-size: 2.5rem;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .auth-card {
+                padding: 1.5rem;
+            }
+            
+            .auth-header h2 {
+                font-size: 1.25rem;
+            }
+            
+            .auth-header p {
+                font-size: 0.9rem;
+            }
+            
+            .form-control {
+                padding: 0.875rem 1rem;
+                font-size: 0.9rem;
+            }
+            
+            .auth-submit-btn {
+                padding: 0.875rem 1.5rem;
+                font-size: 0.9rem;
+            }
+            
+            .field-help {
+                font-size: 0.75rem;
+            }
+        }
+    </style>
+{% endblock %}

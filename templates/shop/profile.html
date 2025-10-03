@@ -1,0 +1,694 @@
+{% extends 'shop/base.html' %}
+{% load humanize %}
+
+{% block page_title %}Profile - JEE TECH{% endblock %}
+{% block page_heading %}My Profile{% endblock %}
+{% block current_page %}Profile{% endblock %}
+
+{% block page_content %}
+    <div class="max-w-7xl mx-auto px-4">
+    <div class="profile-container">
+        <!-- Profile Header -->
+        <div class="profile-header glass-blur fade-in" data-animate>
+            <div class="profile-avatar">
+                <div class="avatar-circle">
+                    {{ user.first_name|first|default:user.username|first|upper }}
+                </div>
+            </div>
+            <div class="profile-info">
+                <h2>{{ user.get_full_name|default:user.username }}</h2>
+                <p class="profile-email">{{ user.email }}</p>
+                <p class="profile-joined">Member since {{ user.date_joined|date:"F Y" }}</p>
+            </div>
+            <div class="profile-actions">
+                <button class="btn btn-outline" onclick="editProfile()">Edit Profile</button>
+            </div>
+        </div>
+
+        <!-- Profile Stats -->
+        <div class="profile-stats">
+            <div class="stat-card glass-blur fade-in" data-animate>
+                <div class="stat-icon">🛒</div>
+                <div class="stat-info">
+                    <h3>{{ cart_items_count }}</h3>
+                    <p>Items in Cart</p>
+                </div>
+                <a href="{% url 'cart' %}" class="stat-link">View Cart</a>
+            </div>
+            
+            <div class="stat-card glass-blur fade-in" data-animate>
+                <div class="stat-icon">💝</div>
+                <div class="stat-info">
+                    <h3>{{ wishlist_items_count }}</h3>
+                    <p>Wishlist Items</p>
+                </div>
+                <a href="{% url 'wishlist' %}" class="stat-link">View Wishlist</a>
+            </div>
+            
+            <div class="stat-card glass-blur fade-in" data-animate>
+                <div class="stat-icon">💰</div>
+                <div class="stat-info">
+                    <h3>₹{{ cart_total|intcomma|default:"0" }}</h3>
+                    <p>Cart Total</p>
+                </div>
+                {% if cart_total %}
+                    <a href="{% url 'checkout_whatsapp' %}" class="stat-link">Checkout</a>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Profile Sections -->
+        <div class="profile-sections">
+            <!-- Account Information -->
+            <div class="profile-section glass-blur fade-in" data-animate>
+                <h3>Account Information</h3>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <label>Username</label>
+                        <span>{{ user.username }}</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Email</label>
+                        <span>{{ user.email|default:"Not provided" }}</span>
+                    </div>
+                    <div class="info-item">
+                        <label>First Name</label>
+                        <span>{{ user.first_name|default:"Not provided" }}</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Last Name</label>
+                        <span>{{ user.last_name|default:"Not provided" }}</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Date Joined</label>
+                        <span>{{ user.date_joined|date:"F d, Y" }}</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Last Login</label>
+                        <span>{{ user.last_login|date:"F d, Y g:i A"|default:"Never" }}</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Phone</label>
+                        <span>{{ profile.phone|default:"Not provided" }}</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Address</label>
+                        <span>{{ profile.address|default:"Not provided"|linebreaks }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="profile-section glass-blur fade-in" data-animate>
+                <h3>Quick Actions</h3>
+                <div class="actions-grid">
+                    <a href="{% url 'product_list' %}" class="action-card">
+                        <div class="action-icon">🛍️</div>
+                        <div class="action-content">
+                            <h4>Browse Products</h4>
+                            <p>Discover amazing products</p>
+                        </div>
+                    </a>
+                    
+                    <a href="{% url 'cart' %}" class="action-card">
+                        <div class="action-icon">🛒</div>
+                        <div class="action-content">
+                            <h4>View Cart</h4>
+                            <p>Review your selected items</p>
+                        </div>
+                    </a>
+                    
+                    <a href="{% url 'wishlist' %}" class="action-card">
+                        <div class="action-icon">💝</div>
+                        <div class="action-content">
+                            <h4>My Wishlist</h4>
+                            <p>Items you want to buy later</p>
+                        </div>
+                    </a>
+                    
+                    {% if cart_total %}
+                        <a href="{% url 'checkout_whatsapp' %}" class="action-card highlight">
+                            <div class="action-icon">📱</div>
+                            <div class="action-content">
+                                <h4>Checkout</h4>
+                                <p>Complete your order via WhatsApp</p>
+                            </div>
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Profile Modal (Hidden by default) -->
+    <div id="editProfileModal" class="modal" style="display: none;">
+        <div class="modal-content glass-blur">
+            <div class="modal-header">
+                <h3>Edit Profile</h3>
+                <button class="modal-close" onclick="closeEditProfile()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="profileForm" method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label class="form-label">{{ form.first_name.label }}</label>
+                        {{ form.first_name }}
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">{{ form.last_name.label }}</label>
+                        {{ form.last_name }}
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">{{ form.email.label }}</label>
+                        {{ form.email }}
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">{{ form.phone.label }}</label>
+                        {{ form.phone }}
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">{{ form.address.label }}</label>
+                        {{ form.address }}
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                        <button type="button" class="btn btn-outline" onclick="closeEditProfile()">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    </div>
+{% endblock %}
+
+{% block extra_css %}
+    {{ block.super }}
+    <style>
+        .profile-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .profile-header {
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: 2rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            align-items: center;
+        }
+        
+        .profile-avatar {
+            display: flex;
+            align-items: center;
+        }
+        
+        .avatar-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #001014;
+        }
+        
+        .profile-info h2 {
+            margin: 0 0 0.5rem;
+            color: var(--text-light);
+        }
+        
+        .profile-email {
+            color: var(--primary);
+            margin: 0 0 0.25rem;
+            font-weight: 500;
+        }
+        
+        .profile-joined {
+            color: var(--text-muted);
+            margin: 0;
+            font-size: 0.9rem;
+        }
+        
+        .profile-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            padding: 1.5rem;
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: 1rem;
+            align-items: center;
+            transition: all var(--transition-normal);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .stat-icon {
+            font-size: 2rem;
+        }
+        
+        .stat-info h3 {
+            margin: 0 0 0.25rem;
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+        
+        .stat-info p {
+            margin: 0;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        
+        .stat-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: color var(--transition-fast);
+        }
+        
+        .stat-link:hover {
+            color: var(--primary-dark);
+        }
+        
+        .profile-sections {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+        
+        .profile-section {
+            padding: 2rem;
+        }
+        
+        .profile-section h3 {
+            margin: 0 0 1.5rem;
+            color: var(--text-light);
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 0.5rem;
+        }
+        
+        .info-grid {
+            display: grid;
+            gap: 1rem;
+        }
+        
+        .info-item {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 1rem;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--stroke);
+        }
+        
+        .info-item:last-child {
+            border-bottom: none;
+        }
+        
+        .info-item label {
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+        
+        .info-item span {
+            color: var(--text-light);
+        }
+        
+        .actions-grid {
+            display: grid;
+            gap: 1rem;
+        }
+        
+        .action-card {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 1rem;
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--stroke);
+            text-decoration: none;
+            transition: all var(--transition-normal);
+        }
+        
+        .action-card:hover {
+            background: rgba(255, 255, 255, 0.06);
+            transform: translateX(5px);
+        }
+        
+        .action-card.highlight {
+            background: rgba(110, 231, 255, 0.1);
+            border-color: var(--primary);
+        }
+        
+        .action-icon {
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .action-content h4 {
+            margin: 0 0 0.25rem;
+            color: var(--text-light);
+            font-size: 1rem;
+        }
+        
+        .action-content p {
+            margin: 0;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+        
+        /* Modal Styles */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: var(--z-modal);
+        }
+        
+        .modal-content {
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 2rem 1rem;
+            border-bottom: 1px solid var(--stroke);
+        }
+        
+        .modal-header h3 {
+            margin: 0;
+            color: var(--text-light);
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 0.5rem;
+            transition: color var(--transition-fast);
+        }
+        
+        .modal-close:hover {
+            color: var(--text-light);
+        }
+        
+        .modal-body {
+            padding: 2rem;
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        @media (max-width: 768px) {
+            .profile-container {
+                padding: 0 1rem;
+            }
+            
+            .profile-header {
+                grid-template-columns: 1fr;
+                text-align: center;
+                gap: 1.5rem;
+                padding: 1.5rem;
+            }
+            
+            .avatar-circle {
+                width: 70px;
+                height: 70px;
+                font-size: 1.75rem;
+            }
+            
+            .profile-info h2 {
+                font-size: 1.5rem;
+            }
+            
+            .profile-sections {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .profile-section {
+                padding: 1.5rem;
+            }
+            
+            .profile-section h3 {
+                font-size: 1.25rem;
+            }
+            
+            .profile-stats {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .stat-card {
+                padding: 1.25rem;
+            }
+            
+            .stat-icon {
+                font-size: 1.75rem;
+            }
+            
+            .stat-info h3 {
+                font-size: 1.25rem;
+            }
+            
+            .info-item {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+                padding: 0.5rem 0;
+            }
+            
+            .info-item label {
+                font-weight: 700;
+                color: var(--primary);
+            }
+            
+            .modal-content {
+                width: 95%;
+                margin: 1rem;
+            }
+            
+            .modal-body {
+                padding: 1.5rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .profile-container {
+                padding: 0 0.5rem;
+            }
+            
+            .profile-header {
+                padding: 1rem;
+                gap: 1rem;
+            }
+            
+            .avatar-circle {
+                width: 60px;
+                height: 60px;
+                font-size: 1.5rem;
+            }
+            
+            .profile-info h2 {
+                font-size: 1.25rem;
+            }
+            
+            .profile-email {
+                font-size: 0.9rem;
+            }
+            
+            .profile-joined {
+                font-size: 0.8rem;
+            }
+            
+            .profile-sections {
+                gap: 1rem;
+            }
+            
+            .profile-section {
+                padding: 1rem;
+            }
+            
+            .profile-section h3 {
+                font-size: 1.1rem;
+            }
+            
+            .profile-stats {
+                margin-bottom: 1.5rem;
+            }
+            
+            .stat-card {
+                padding: 1rem;
+                grid-template-columns: auto 1fr;
+                gap: 0.75rem;
+            }
+            
+            .stat-icon {
+                font-size: 1.5rem;
+            }
+            
+            .stat-info h3 {
+                font-size: 1.1rem;
+            }
+            
+            .stat-info p {
+                font-size: 0.8rem;
+            }
+            
+            .stat-link {
+                font-size: 0.8rem;
+                grid-column: 1 / -1;
+                text-align: center;
+                margin-top: 0.5rem;
+            }
+            
+            .info-item {
+                padding: 0.375rem 0;
+            }
+            
+            .info-item label {
+                font-size: 0.85rem;
+            }
+            
+            .info-item span {
+                font-size: 0.9rem;
+            }
+            
+            .action-card {
+                padding: 0.75rem;
+            }
+            
+            .action-icon {
+                font-size: 1.25rem;
+            }
+            
+            .action-content h4 {
+                font-size: 0.9rem;
+            }
+            
+            .action-content p {
+                font-size: 0.8rem;
+            }
+            
+            .modal-content {
+                width: 98%;
+                margin: 0.5rem;
+            }
+            
+            .modal-header {
+                padding: 1rem 1.5rem 0.5rem;
+            }
+            
+            .modal-header h3 {
+                font-size: 1.1rem;
+            }
+            
+            .modal-body {
+                padding: 1rem;
+            }
+            
+            .form-group {
+                margin-bottom: 1rem;
+            }
+            
+            .form-label {
+                font-size: 0.9rem;
+            }
+            
+            .form-actions {
+                gap: 0.75rem;
+                margin-top: 1rem;
+            }
+            
+            .form-actions .btn {
+                padding: 0.625rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
+        
+        @media (max-width: 360px) {
+            .profile-header {
+                padding: 0.75rem;
+            }
+            
+            .avatar-circle {
+                width: 50px;
+                height: 50px;
+                font-size: 1.25rem;
+            }
+            
+            .profile-info h2 {
+                font-size: 1.1rem;
+            }
+            
+            .profile-section {
+                padding: 0.75rem;
+            }
+            
+            .stat-card {
+                padding: 0.75rem;
+            }
+            
+            .stat-info h3 {
+                font-size: 1rem;
+            }
+            
+            .action-card {
+                padding: 0.5rem;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        function editProfile() {
+            document.getElementById('editProfileModal').style.display = 'flex';
+        }
+        
+        function closeEditProfile() {
+            document.getElementById('editProfileModal').style.display = 'none';
+        }
+        
+        // Close modal when clicking outside
+        document.getElementById('editProfileModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeEditProfile();
+            }
+        });
+        
+        // Handle profile form submission
+        document.getElementById('profileForm').addEventListener('submit', function(e) {
+            // Allow the form to submit normally to the server
+            // The Django view will handle the form processing
+        });
+    </script>
+{% endblock %}

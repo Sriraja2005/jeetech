@@ -1,0 +1,460 @@
+{% extends 'shop/base.html' %}
+
+{% block page_title %}About Us - JEE TECH{% endblock %}
+{% block page_heading %}About JEE TECH{% endblock %}
+{% block current_page %}About{% endblock %}
+
+{% block page_content %}
+    <!-- Hero Section -->
+    <div class="about-hero glass-blur fade-in" data-animate>
+        <div class="hero-content">
+            <h2>Welcome to JEE TECH</h2>
+            <p class="hero-subtitle">Your premium destination for next-generation products with a sleek, modern shopping experience.</p>
+        </div>
+    </div>
+
+    <!-- Mission Section -->
+    <div class="mission-section fade-in" data-animate>
+        <div class="mission-content glass-blur">
+            <div class="mission-text">
+                <h3>Our Mission</h3>
+                <p>At JEE TECH, we believe shopping should be an experience, not just a transaction. We've crafted a platform that combines cutting-edge design with powerful functionality to bring you the future of e-commerce today.</p>
+                <p>Our dark, elegant interface with glassmorphism effects isn't just beautiful—it's designed to make your shopping journey smooth, intuitive, and enjoyable.</p>
+            </div>
+            <div class="mission-image">
+                <div class="image-placeholder">
+                    <div class="placeholder-icon">🚀</div>
+                    <p>Innovation First</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="features-section">
+        <h3 class="section-title">Why Choose JEE TECH?</h3>
+        <div class="features-grid">
+            <div class="feature-card glass-blur fade-in delay-1" data-animate>
+                <div class="feature-icon">🎨</div>
+                <h4>Modern Design</h4>
+                <p>Beautiful dark UI with glassmorphism effects that provide an elegant and immersive shopping experience.</p>
+            </div>
+            
+            <div class="feature-card glass-blur fade-in delay-2" data-animate>
+                <div class="feature-icon">⚡</div>
+                <h4>Lightning Fast</h4>
+                <p>Optimized performance with smooth animations and instant page loads for seamless browsing and shopping.</p>
+            </div>
+            
+            <div class="feature-card glass-blur fade-in delay-3" data-animate>
+                <div class="feature-icon">🔒</div>
+                <h4>Secure Shopping</h4>
+                <p>Advanced security measures to protect your data and ensure safe, worry-free transactions.</p>
+            </div>
+            
+            <div class="feature-card glass-blur fade-in delay-4" data-animate>
+                <div class="feature-icon">📱</div>
+                <h4>Mobile First</h4>
+                <p>Fully responsive design that works perfectly on all devices, from desktop to mobile.</p>
+            </div>
+            
+            <div class="feature-card glass-blur fade-in delay-5" data-animate>
+                <div class="feature-icon">💝</div>
+                <h4>Wishlist & Cart</h4>
+                <p>Save your favorite items and manage your shopping cart with ease across all your devices.</p>
+            </div>
+            
+            <div class="feature-card glass-blur fade-in delay-6" data-animate>
+                <div class="feature-icon">🤝</div>
+                <h4>WhatsApp Checkout</h4>
+                <p>Complete your orders through WhatsApp for a personal and convenient shopping experience.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Section -->
+    <div class="stats-section glass-blur fade-in" data-animate>
+        <div class="stats-grid">
+            <div class="stat-item">
+                <div class="stat-number">10K+</div>
+                <div class="stat-label">Happy Customers</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">5K+</div>
+                <div class="stat-label">Products</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">99%</div>
+                <div class="stat-label">Satisfaction Rate</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">24/7</div>
+                <div class="stat-label">Support</div>
+            </div>
+        </div>
+    </div>
+
+    
+
+    <!-- CTA Section -->
+    <div class="cta-section glass-blur fade-in" data-animate>
+        <div class="cta-content">
+            <h3>Ready to Experience the Future of Shopping?</h3>
+            <p>Join thousands of satisfied customers who have made JEE TECH their preferred shopping destination.</p>
+            <div class="cta-actions">
+                <a href="{% url 'product_list' %}" class="btn btn-primary">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17M17 13v6a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2v-6.001"/>
+                    </svg>
+                    Start Shopping
+                </a>
+                {% if not user.is_authenticated %}
+                    <a href="{% url 'signup' %}" class="btn btn-outline">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                            <circle cx="8.5" cy="7" r="4"/>
+                            <line x1="20" y1="8" x2="20" y2="14"/>
+                            <line x1="23" y1="11" x2="17" y2="11"/>
+                        </svg>
+                        Join JEE TECH
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_css %}
+    {{ block.super }}
+    <style>
+        .about-hero {
+            text-align: center;
+            padding: 4rem 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .hero-content h2 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(120deg, #fff, var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        .mission-section {
+            margin-bottom: 4rem;
+        }
+        
+        .mission-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 3rem;
+            padding: 3rem;
+            align-items: center;
+        }
+        
+        .mission-text h3 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-light);
+        }
+        
+        .mission-text p {
+            color: var(--text-muted);
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+        }
+        
+        .image-placeholder {
+            text-align: center;
+            padding: 2rem;
+            border: 2px dashed var(--stroke);
+            border-radius: var(--radius-lg);
+            background: rgba(255, 255, 255, 0.02);
+        }
+        
+        .placeholder-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+        
+        .image-placeholder p {
+            color: var(--text-muted);
+            margin: 0;
+            font-weight: 600;
+        }
+        
+        .features-section {
+            margin-bottom: 4rem;
+        }
+        
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: var(--text-light);
+            position: relative;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -0.75rem;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: var(--primary);
+            border-radius: 3px;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .feature-card {
+            padding: 2rem;
+            text-align: center;
+            transition: all var(--transition-normal);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        }
+        
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .feature-card h4 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            color: var(--text-light);
+        }
+        
+        .feature-card p {
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+        
+        .stats-section {
+            padding: 4rem 2rem;
+            margin: 4rem 0;
+            text-align: center;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .stat-item {
+            padding: 1.5rem;
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            line-height: 1;
+        }
+        
+        .stat-label {
+            font-size: 1rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 500;
+        }
+        
+        .tech-section {
+            margin-bottom: 4rem;
+        }
+        
+        .tech-content {
+            padding: 3rem;
+            text-align: center;
+        }
+        
+        .tech-content h3 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--text-light);
+        }
+        
+        .tech-content > p {
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+        
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .tech-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--stroke);
+            transition: all var(--transition-normal);
+        }
+        
+        .tech-item:hover {
+            background: rgba(255, 255, 255, 0.06);
+            transform: translateY(-2px);
+        }
+        
+        .tech-icon {
+            font-size: 2rem;
+        }
+        
+        .tech-info h4 {
+            margin: 0 0 0.25rem;
+            color: var(--text-light);
+            font-size: 1rem;
+        }
+        
+        .tech-info p {
+            margin: 0;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+        
+        .cta-section {
+            text-align: center;
+            padding: 4rem 2rem;
+            margin-top: 4rem;
+        }
+        
+        .cta-content h3 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--text-light);
+        }
+        
+        .cta-content p {
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .cta-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        @media (max-width: 768px) {
+            .hero-content h2 {
+                font-size: 2rem;
+            }
+            
+            .mission-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .tech-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .tech-item {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .cta-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        // Counter animation for stats
+        function animateCounters() {
+            const counters = document.querySelectorAll('.stat-number');
+            
+            counters.forEach(counter => {
+                const target = counter.textContent;
+                const numericTarget = parseInt(target.replace(/[^\d]/g, ''));
+                const suffix = target.replace(/[\d]/g, '');
+                
+                if (numericTarget) {
+                    let current = 0;
+                    const increment = numericTarget / 50;
+                    const timer = setInterval(() => {
+                        current += increment;
+                        if (current >= numericTarget) {
+                            counter.textContent = target;
+                            clearInterval(timer);
+                        } else {
+                            counter.textContent = Math.floor(current) + suffix;
+                        }
+                    }, 30);
+                }
+            });
+        }
+
+        // Trigger counter animation when stats section is visible
+        const statsObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    animateCounters();
+                    statsObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const statsSection = document.querySelector('.stats-section');
+            if (statsSection) {
+                statsObserver.observe(statsSection);
+            }
+        });
+    </script>
+{% endblock %}

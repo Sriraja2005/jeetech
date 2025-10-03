@@ -1,0 +1,115 @@
+{% extends 'shop/base.html' %}
+{% load humanize %}
+
+{% block title %}{{ category.name }} - JEE TECH{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4">
+    <!-- Breadcrumbs -->
+    <nav aria-label="breadcrumb" class="text-sm text-slate-400 mb-4">
+        <ol class="flex items-center gap-2 flex-wrap">
+            <li><a class="hover:text-cyan-300" href="{% url 'home' %}">Home</a></li>
+            <li class="opacity-50">/</li>
+            <li><a class="hover:text-cyan-300" href="{% url 'product_list' %}">Products</a></li>
+            <li class="opacity-50">/</li>
+            <li class="text-slate-200">{{ category.name }}</li>
+        </ol>
+    </nav>
+
+    <h1 class="text-2xl md:text-3xl font-semibold text-white mb-6">{{ category.name }}</h1>
+
+    <!-- Products Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        {% for product in products %}
+        <div class="rounded-xl border border-white/10 bg-slate-900/70 backdrop-blur overflow-hidden flex flex-col">
+            <div class="relative">
+                {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-full h-48 object-cover">
+                {% else %}
+                <img src="https://via.placeholder.com/600x400" alt="{{ product.name }}" class="w-full h-48 object-cover">
+                {% endif %}
+                
+
+                {# Wishlist Heart #}
+                {% if user.is_authenticated %}
+                <form method="post" action="{% url 'toggle_wishlist' product.slug %}" class="wishlist-form absolute top-2 left-2" onclick="event.stopPropagation()">
+                    {% csrf_token %}
+                    {% if product.id in wishlist_product_ids %}
+                    <button type="submit" class="product-wishlist active" title="Remove from Wishlist">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                        </svg>
+                    </button>
+                    {% else %}
+                    <button type="submit" class="product-wishlist" title="Add to Wishlist">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                        </svg>
+                    </button>
+                    {% endif %}
+                </form>
+                {% else %}
+                <a href="{% url 'login' %}?next={{ request.get_full_path }}" class="absolute top-2 left-2" onclick="event.stopPropagation()" title="Login to add to Wishlist">
+                    <span class="product-wishlist" aria-label="Login to add to Wishlist">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                        </svg>
+                    </span>
+                </a>
+                {% endif %}
+            </div>
+            <div class="p-4 flex flex-col gap-2 grow">
+                <h5 class="text-slate-100 font-semibold">{{ product.name|truncatechars:30 }}</h5>
+                <p class="text-slate-400 text-sm">{{ product.description|truncatechars:60 }}</p>
+                <div class="mt-auto">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-lg font-bold text-cyan-300">₹{{ product.price|intcomma }}</span>
+                    </div>
+                    <div class="grid grid-cols-1 gap-2">
+                        <a href="{% url 'product_detail' product.slug %}" class="inline-flex items-center justify-center rounded-md border border-white/15 px-3 py-2 text-slate-200 hover:text-cyan-300 hover:border-cyan-300 transition">View Details</a>
+                        {% if user.is_authenticated and product.in_stock %}
+                        <form method="post" action="{% url 'add_to_cart' product.slug %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="quantity" value="1">
+                            <button type="submit" class="w-full inline-flex items-center justify-center rounded-md border border-white/15 px-3 py-2 text-slate-200 hover:text-cyan-300 hover:border-cyan-300 transition">Quick Add to Cart</button>
+                        </form>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-span-full">
+            <div class="rounded-lg border border-white/10 bg-slate-900/60 text-slate-200 p-4">No products found in this category.</div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if page_obj.has_other_pages %}
+    <nav aria-label="Product pagination" class="mt-6">
+        <ul class="flex items-center justify-center gap-2">
+            {% if page_obj.has_previous %}
+            <li>
+                <a class="inline-flex items-center rounded-md border border-white/15 px-3 py-1.5 text-slate-200 hover:text-cyan-300 hover:border-cyan-300 transition" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+            </li>
+            {% endif %}
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                <li><span class="inline-flex items-center rounded-md bg-cyan-400 text-slate-900 px-3 py-1.5 font-semibold">{{ num }}</span></li>
+                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                <li>
+                    <a class="inline-flex items-center rounded-md border border-white/15 px-3 py-1.5 text-slate-200 hover:text-cyan-300 hover:border-cyan-300 transition" href="?page={{ num }}">{{ num }}</a>
+                </li>
+                {% endif %}
+            {% endfor %}
+            {% if page_obj.has_next %}
+            <li>
+                <a class="inline-flex items-center rounded-md border border-white/15 px-3 py-1.5 text-slate-200 hover:text-cyan-300 hover:border-cyan-300 transition" href="?page={{ page_obj.next_page_number }}">Next</a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+{% endblock %}

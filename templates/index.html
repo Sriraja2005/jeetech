@@ -1,0 +1,304 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}JEE TECH – Home{% endblock %}
+{% block meta_description %}JEE TECH - Discover premium products with a vibrant, modern interface. Shop electronics, fashion, and more with our beautiful light theme and engaging animations.{% endblock %}
+
+{% block content %}
+  <!-- Hero Section -->
+  <section class="hero fade-in" data-animate>
+    <div class="hero-content">
+      <h1 class="title float">Discover Next‑Gen Gear</h1>
+      <p class="subtitle">Premium products with a vibrant, modern interface. Clean, engaging, and lightning-fast shopping experience.</p>
+      <div class="btn-group">
+        <a href="{% url 'product_list' %}" class="btn btn-primary">Shop Now</a>
+        <a href="{% url 'about' %}" class="btn btn-outline">Learn More</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Products Section -->
+  <section id="products" class="products-section fade-in" data-animate>
+    <div class="products-header">
+      <h2 class="section-title">Featured Products</h2>
+      <p>Discover our handpicked selection of premium products</p>
+    </div>
+    
+    <!-- Category Filter -->
+    <div class="category-filter glass-blur fade-in" data-animate>
+      <div class="category-buttons">
+        <button class="category-btn active" data-category="all">All Products</button>
+        {% for category in categories %}
+          <button class="category-btn" data-category="{{ category.id }}">{{ category.name }}</button>
+        {% endfor %}
+      </div>
+    </div>
+    
+    <!-- Products Grid -->
+    <div class="products-grid" id="home-products-grid">
+      {% for product in featured_products %}
+        <div class="product-card glass-blur fade-in clickable-card" data-animate data-category="{{ product.category.id }}" data-url="{% url 'product_detail' product.slug|default_if_none:product.id %}">
+          <!-- Product Image -->
+          <div class="product-image">
+            {% if product.image %}
+              <img src="{{ product.image.url }}" alt="{{ product.name }}" onerror="this.src='https://via.placeholder.com/300x300/333/fff?text={{ product.name|first }}'">
+            {% else %}
+              {% with main_image_url=product.get_main_image_url %}
+                {% if main_image_url %}
+                  <img src="{{ main_image_url }}" alt="{{ product.name }}" onerror="this.src='https://via.placeholder.com/300x300/333/fff?text={{ product.name|first }}'">
+                {% else %}
+                  <img src="https://via.placeholder.com/300x300/333/fff?text={{ product.name|first }}" alt="{{ product.name }}">
+                {% endif %}
+              {% endwith %}
+            {% endif %}
+            
+            
+            
+            <!-- Wishlist Button -->
+            {% if user.is_authenticated %}
+              <form method="post" action="{% url 'toggle_wishlist' product.slug|default_if_none:product.id %}" class="wishlist-form" onclick="event.stopPropagation()" style="position:absolute; top:1rem; right:1rem;">
+                {% csrf_token %}
+                {% if product.id in wishlist_product_ids %}
+                  <button type="submit" class="product-wishlist active" title="Remove from Wishlist">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                    </svg>
+                  </button>
+                {% else %}
+                  <button type="submit" class="product-wishlist" title="Add to Wishlist">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                    </svg>
+                  </button>
+                {% endif %}
+              </form>
+            {% else %}
+              <a href="{% url 'login' %}?next={{ request.get_full_path }}" class="wishlist-form" onclick="event.stopPropagation()" title="Login to add to Wishlist" style="position:absolute; top:1rem; right:1rem;">
+                <span class="product-wishlist" aria-label="Login to add to Wishlist">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                  </svg>
+                </span>
+              </a>
+            {% endif %}
+          </div>
+          
+          <!-- Product Content -->
+          <div class="product-content">
+            <div class="product-category">{{ product.category.name }}</div>
+            <h3 class="product-title">{{ product.name }}</h3>
+            <p class="product-description">{{ product.description|truncatechars:80 }}</p>
+            
+            <!-- Product Footer -->
+            <div class="product-footer">
+              <div class="product-price">₹{{ product.price|floatformat:2 }}</div>
+              <div class="product-actions">
+                {% if user.is_authenticated %}
+                  <form method="post" action="{% url 'add_to_cart' product.slug|default_if_none:product.id %}" class="add-to-cart-form" onclick="event.stopPropagation()">
+                    {% csrf_token %}
+                    <button type="submit" class="add-to-cart-modern" title="Add to Cart">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="9" cy="21" r="1"/>
+                        <circle cx="20" cy="21" r="1"/>
+                        <path d="m1 1 4 4 5.5 11h8.5l3.5-7H6"/>
+                      </svg>
+                    </button>
+                  </form>
+                {% else %}
+                  <a href="{% url 'login' %}?next={{ request.get_full_path }}" class="add-to-cart-modern" onclick="event.stopPropagation()" title="Login to add to cart">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="9" cy="21" r="1"/>
+                      <circle cx="20" cy="21" r="1"/>
+                      <path d="m1 1 4 4 5.5 11h8.5l3.5-7H6"/>
+                    </svg>
+                  </a>
+                {% endif %}
+                <a href="{% url 'product_detail' product.slug|default_if_none:product.id %}" class="product-button view-details-btn" onclick="event.stopPropagation()">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                    <circle cx="12" cy="12" r="3"/>
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% empty %}
+        <div class="no-products glass-blur fade-in" data-animate>
+          <div class="no-products-content">
+            <h3>No Products Available</h3>
+            <p>We're working on adding new products. Please check back later!</p>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section id="about" class="about-section glass-blur fade-in" data-animate>
+    <div class="about-content">
+      <h2 class="about-title">Why Choose JEE TECH?</h2>
+      <p class="about-description">
+        Experience shopping like never before with our cutting-edge platform that combines 
+        modern design with powerful functionality.
+      </p>
+      
+      <div class="features-grid">
+        <div class="feature-card glass-blur fade-in delay-1" data-animate>
+          <div class="feature-icon">🎨</div>
+          <h3 class="feature-title">Modern Design</h3>
+          <p class="feature-description">
+            Beautiful dark UI with glassmorphism effects that provide an elegant shopping experience.
+          </p>
+        </div>
+        
+        <div class="feature-card glass-blur fade-in delay-2" data-animate>
+          <div class="feature-icon">⚡</div>
+          <h3 class="feature-title">Lightning Fast</h3>
+          <p class="feature-description">
+            Optimized performance with smooth animations and instant page loads for seamless browsing.
+          </p>
+        </div>
+        
+        <div class="feature-card glass-blur fade-in delay-3" data-animate>
+          <div class="feature-icon">🔒</div>
+          <h3 class="feature-title">Secure Shopping</h3>
+          <p class="feature-description">
+            Advanced security measures to protect your data and ensure safe transactions.
+          </p>
+        </div>
+
+        <div class="feature-card glass-blur fade-in delay-5" data-animate>
+          <div class="feature-icon">💝</div>
+          <h4>Wishlist & Cart</h4>
+          <p>Save your favorite items and manage your shopping cart with ease across all your devices.</p>
+      </div>
+      
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats Section -->
+  <section class="stats-section glass-blur fade-in" data-animate>
+    <div class="stats-grid">
+      <div class="stat-item">
+        <div class="stat-number">10K+</div>
+        <div class="stat-label">Happy Customers</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">5K+</div>
+        <div class="stat-label">Products</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">99%</div>
+        <div class="stat-label">Satisfaction Rate</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">24/7</div>
+        <div class="stat-label">Support</div>
+    </div>
+  </section>
+{% endblock %}
+
+{% block scripts %}
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Category filtering functionality
+      const categoryButtons = document.querySelectorAll('.category-btn');
+      const productCards = document.querySelectorAll('.product-card');
+      
+      categoryButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          const selectedCategory = this.getAttribute('data-category');
+          
+          // Update active button
+          categoryButtons.forEach(btn => btn.classList.remove('active'));
+          this.classList.add('active');
+          
+          // Filter products
+          productCards.forEach(card => {
+            const cardCategory = card.getAttribute('data-category');
+            
+            if (selectedCategory === 'all' || cardCategory === selectedCategory) {
+              card.style.display = 'block';
+              // Add fade-in animation
+              card.style.opacity = '0';
+              setTimeout(() => {
+                card.style.opacity = '1';
+              }, 50);
+            } else {
+              card.style.display = 'none';
+            }
+          });
+        });
+      });
+      
+      // Add to cart functionality with visual feedback
+      const addToCartForms = document.querySelectorAll('.add-to-cart-form');
+      addToCartForms.forEach(form => {
+        form.addEventListener('submit', function(e) {
+          const button = this.querySelector('button');
+          const originalContent = button.innerHTML;
+          
+          // Visual feedback
+          button.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>';
+          button.style.background = 'var(--success)';
+          
+          // Update cart indicator in navigation
+          setTimeout(() => {
+            const navCart = document.querySelector('.nav-links a[href*="cart"]');
+            if (navCart) {
+              navCart.textContent = 'Cart • +1';
+              setTimeout(() => {
+                navCart.textContent = 'Cart';
+              }, 2000);
+            }
+            
+            // Reset button
+            button.innerHTML = originalContent;
+            button.style.background = '';
+          }, 1000);
+        });
+      });
+      
+      // Animate counters
+      function animateCounters() {
+        const counters = document.querySelectorAll('.stat-number');
+        counters.forEach(counter => {
+          const target = counter.textContent;
+          const numericTarget = parseInt(target.replace(/[^\d]/g, ''));
+          const suffix = target.replace(/[\d]/g, '');
+          
+          if (numericTarget) {
+            let current = 0;
+            const increment = numericTarget / 50;
+            const timer = setInterval(() => {
+              current += increment;
+              if (current >= numericTarget) {
+                counter.textContent = target;
+                clearInterval(timer);
+              } else {
+                counter.textContent = Math.floor(current) + suffix;
+              }
+            }, 30);
+          }
+        });
+      }
+      
+      // Trigger counter animation when stats section is visible
+      const statsObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            animateCounters();
+            statsObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.5 });
+      
+      const statsSection = document.querySelector('.stats-section');
+      if (statsSection) {
+        statsObserver.observe(statsSection);
+      }
+    });
+  </script>
+{% endblock %}

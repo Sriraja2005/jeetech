@@ -1,0 +1,110 @@
+/* Custom Admin Styles for Better Image Management */
+
+/* Product Image Inline Styling */
+.inline-group .tabular .form-row .field-image_preview {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.inline-group .tabular .form-row .field-image_preview img {
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease;
+}
+
+.inline-group .tabular .form-row .field-image_preview img:hover {
+    transform: scale(1.1);
+    border-color: #79aec8;
+}
+
+/* Main Product Image Preview */
+.field-image_preview img {
+    border: 3px solid #79aec8;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+.field-image_preview img:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+/* Category Admin Improvements */
+.field-product_count {
+    font-weight: bold;
+    color: #79aec8;
+}
+
+/* Additional Images Count Styling */
+.field-additional_images_count {
+    text-align: center;
+    font-size: 12px;
+}
+
+/* Fieldset Styling */
+.module.aligned .form-row .field-box {
+    margin-bottom: 10px;
+}
+
+/* Inline Add Button Styling */
+.add-row a {
+    background-color: #79aec8;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.2s ease;
+}
+
+.add-row a:hover {
+    background-color: #5b8db3;
+}
+
+/* Success Messages for Image Operations */
+.messagelist .success {
+    background-color: #dfd;
+    border-color: #6c6;
+}
+
+/* Error Messages for Image Operations */
+.messagelist .error {
+    background-color: #fdd;
+    border-color: #c66;
+}
+
+/* Responsive Image Grid for Multiple Images */
+@media (max-width: 768px) {
+    .inline-group .tabular .form-row .field-image_preview img {
+        max-width: 60px;
+        max-height: 60px;
+    }
+    
+    .field-image_preview img {
+        max-width: 100px;
+        max-height: 100px;
+    }
+}
+
+/* Loading State for Image Uploads */
+.field-image input[type="file"] {
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    transition: border-color 0.2s ease;
+}
+
+.field-image input[type="file"]:hover {
+    border-color: #79aec8;
+    background-color: #f0f8ff;
+}
+
+/* Drag and Drop Styling */
+.field-image input[type="file"]:focus {
+    outline: none;
+    border-color: #79aec8;
+    box-shadow: 0 0 5px rgba(121, 174, 200, 0.3);
+}
